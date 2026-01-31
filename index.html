@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="vi" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber Security Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body
+    class="h-full m-0 p-0 overflow-hidden font-['Nunito'] bg-slate-900 flex items-center justify-center"
+  >
+    <div
+      class="fixed inset-0 bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900 z-[-1]"
+    ></div>
+
+    <div
+      id="app"
+      class="h-full w-full max-w-[1400px] mx-auto overflow-y-auto p-4 md:p-6 scroll-smooth"
+    >
+      <section
+        id="welcome-screen"
+        class="min-h-full flex flex-col items-center justify-center relative"
+      >
+        <div
+          class="bg-white/5 backdrop-blur-xl p-12 rounded-[3rem] border border-white/10 shadow-2xl text-center cell-pop max-w-2xl w-full"
+        >
+          <div
+            class="text-9xl mb-6 float drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+          >
+            🔐
+          </div>
+          <h1
+            id="welcome-title"
+            class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-200 mb-6 tracking-tight"
+          >
+            CYBER QUEST
+          </h1>
+          <p class="text-cyan-100/80 text-xl font-bold mb-10">
+            Chinh phục 36 thử thách an toàn thông tin
+          </p>
+          <button
+            id="start-btn"
+            class="group relative px-12 py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-black text-xl text-white shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:shadow-[0_0_50px_rgba(6,182,212,0.8)] hover:scale-105 transition-all duration-300"
+          >
+            <span class="relative z-10 uppercase tracking-widest"
+              >Bắt đầu ngay 🚀</span
+            >
+            <div
+              class="absolute inset-0 rounded-full bg-white/20 blur-lg opacity-0 group-hover:opacity-50 transition-opacity"
+            ></div>
+          </button>
+        </div>
+      </section>
+
+      <section id="game-screen" class="hidden flex-col gap-6 min-h-full">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 shadow-lg"
+        >
+          <h2
+            class="text-2xl font-black text-white uppercase italic tracking-wider flex items-center gap-2"
+          >
+            <span class="text-3xl">🛡️</span> Cyber Quest
+          </h2>
+          <div class="flex items-center gap-4 mt-3 md:mt-0">
+            <div class="bg-black/30 px-5 py-2 rounded-xl border border-white/5">
+              <span class="text-cyan-400/70 text-xs font-bold uppercase mr-2"
+                >Tiến độ</span
+              >
+              <span id="progress" class="text-xl font-black text-cyan-300"
+                >0/36</span
+              >
+            </div>
+            <button
+              id="reset-btn"
+              class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2 rounded-xl transition-colors"
+              title="Reset Game"
+            >
+              🔄
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col xl:flex-row gap-6 items-start h-full">
+          <div
+            class="flex-1 w-full bg-black/20 backdrop-blur-sm rounded-[2.5rem] p-6 border border-white/5 shadow-inner"
+          >
+            <div id="score-container" class="grid grid-cols-4 gap-3 mb-6"></div>
+
+            <div
+              id="game-grid"
+              class="grid grid-cols-6 gap-3 aspect-square max-h-[600px] mx-auto"
+            ></div>
+          </div>
+
+          <div class="w-full xl:w-96 xl:sticky xl:top-4 flex-shrink-0">
+            <div
+              class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/20 shadow-2xl relative overflow-hidden"
+            >
+              <div
+                class="absolute top-0 right-0 p-4 opacity-10 text-6xl rotate-12"
+              >
+                🏆
+              </div>
+
+              <div class="text-center mb-6 relative z-10">
+                <h3
+                  class="text-2xl font-black text-white uppercase tracking-widest italic drop-shadow-md"
+                >
+                  Xếp Hạng
+                </h3>
+                <div
+                  class="h-1 w-16 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto mt-2"
+                ></div>
+              </div>
+
+              <div
+                id="leaderboard-list"
+                class="space-y-3 relative z-10 min-h-[300px]"
+              ></div>
+
+              <div
+                class="mt-6 pt-4 border-t border-white/10 text-center relative z-10"
+              >
+                <p
+                  id="round-notification"
+                  class="text-cyan-300 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse bg-black/20 py-2 rounded-full"
+                >
+                  Đang thi đấu...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div
+        id="team-modal"
+        class="fixed inset-0 bg-slate-900/90 backdrop-blur-md hidden items-center justify-center p-4 z-50"
+      >
+        <div
+          class="bg-[#0f172a] rounded-[3rem] p-8 max-w-lg w-full cell-pop shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+        >
+          <div class="text-center mb-8">
+            <span
+              id="modal-cell-info"
+              class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest"
+            >
+              CÂU HỎI 01
+            </span>
+            <h3
+              class="text-3xl font-black text-white mt-6 uppercase leading-tight"
+            >
+              Đội nào trả lời?
+            </h3>
+          </div>
+          <div id="team-options" class="grid grid-cols-2 gap-4"></div>
+          <button
+            onclick="closeModal('team-modal')"
+            class="mt-8 w-full py-4 text-slate-400 hover:text-white font-bold text-xs transition-colors uppercase tracking-[0.2em] hover:bg-white/5 rounded-xl"
+          >
+            ← Hủy bỏ
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="special-intro-modal"
+        class="fixed inset-0 bg-black/95 backdrop-blur-2xl hidden items-center justify-center p-4 z-[55]"
+      >
+        <div class="text-center relative">
+          <div
+            class="absolute inset-0 bg-cyan-500/20 blur-[100px] rounded-full animate-pulse"
+          ></div>
+          <div
+            id="intro-icon"
+            class="text-[12rem] mb-4 float relative z-10 drop-shadow-[0_0_50px_rgba(255,255,255,0.5)]"
+          ></div>
+          <h2
+            id="intro-name"
+            class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 uppercase tracking-tighter mb-4 italic relative z-10"
+          ></h2>
+          <p
+            id="intro-desc"
+            class="text-cyan-400 text-3xl font-bold tracking-[0.5em] uppercase opacity-80 relative z-10 border-t border-b border-cyan-500/30 py-2 inline-block"
+          ></p>
+        </div>
+      </div>
+
+      <div
+        id="question-modal"
+        class="fixed inset-0 bg-slate-900/95 backdrop-blur-lg hidden items-center justify-center p-4 z-50"
+      >
+        <div
+          class="bg-[#1e293b] rounded-[2.5rem] p-8 md:p-12 max-w-2xl w-full cell-pop shadow-2xl relative border-2 border-white/10"
+        >
+          <div
+            id="special-tag"
+            class="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap z-10"
+          ></div>
+          <div class="text-center mb-10 mt-4">
+            <p
+              class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4"
+            >
+              Tìm nghĩa đúng của từ:
+            </p>
+            <h2
+              id="question-word"
+              class="text-6xl md:text-7xl font-black text-white leading-tight drop-shadow-lg"
+            >
+              Word
+            </h2>
+          </div>
+          <div id="options-container" class="grid gap-4"></div>
+        </div>
+      </div>
+
+      <div
+        id="result-modal"
+        class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden items-center justify-center p-4 z-[60]"
+      >
+        <div
+          class="bg-[#0f172a] rounded-[3rem] p-10 max-w-md w-full cell-pop shadow-[0_0_60px_rgba(6,182,212,0.3)] text-center border border-white/20"
+        >
+          <div id="result-icon" class="text-8xl mb-6 animate-bounce"></div>
+          <h2
+            id="result-title"
+            class="text-4xl font-black mb-4 uppercase italic tracking-wide text-white"
+          ></h2>
+          <div class="h-px w-full bg-white/10 my-4"></div>
+          <p
+            id="result-detail"
+            class="text-slate-300 font-bold mb-8 text-xl leading-relaxed"
+          ></p>
+          <button
+            onclick="closeResultModal()"
+            class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black py-5 rounded-2xl hover:scale-105 transition-all shadow-lg active:scale-95 text-lg uppercase tracking-widest"
+          >
+            Tiếp tục
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="minigame-match-modal"
+      class="fixed inset-0 bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-4 z-[55]"
+    >
+      <div
+        class="bg-white/5 border border-white/10 rounded-[2rem] p-8 max-w-4xl w-full h-[80vh] flex flex-col relative shadow-2xl"
+      >
+        <div class="text-center mb-6">
+          <h3
+            class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 uppercase italic tracking-widest"
+          >
+            ⚡ Nối Từ Tốc Độ ⚡
+          </h3>
+          <p class="text-white/60 text-sm mt-2">
+            Chọn một từ bên trái và nối với nghĩa đúng bên phải
+          </p>
+        </div>
+
+        <div
+          class="flex-1 grid grid-cols-2 gap-8 overflow-y-auto p-4"
+          id="match-game-area"
+        >
+          <div id="col-words" class="flex flex-col gap-4"></div>
+          <div id="col-defs" class="flex flex-col gap-4"></div>
+        </div>
+
+        <div
+          class="mt-4 bg-black/30 rounded-full h-4 w-full overflow-hidden border border-white/10"
+        >
+          <div
+            id="match-progress"
+            class="bg-gradient-to-r from-green-400 to-cyan-500 h-full w-0 transition-all duration-300"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="minigame_match.js"></script>
+    <script src="data.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>
