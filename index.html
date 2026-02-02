@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cyber Security Quest</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -14,6 +15,25 @@
   <body
     class="h-full m-0 p-0 overflow-hidden font-['Nunito'] bg-slate-900 flex items-center justify-center"
   >
+    <div
+      id="loading-overlay"
+      class="fixed inset-0 bg-slate-950 z-[999] flex flex-col items-center justify-center transition-opacity duration-500"
+    >
+      <div class="relative">
+        <div
+          class="w-24 h-24 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"
+        ></div>
+        <div class="absolute inset-0 flex items-center justify-center text-3xl">
+          🔐
+        </div>
+      </div>
+      <p
+        class="text-cyan-400 font-black mt-6 animate-pulse uppercase tracking-[0.4em] text-[10px]"
+      >
+        Đang nạp dữ liệu Security...
+      </p>
+    </div>
+
     <div
       class="fixed inset-0 bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900 z-[-1]"
     ></div>
@@ -35,7 +55,6 @@
             🔐
           </div>
           <h1
-            id="welcome-title"
             class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-200 mb-6 tracking-tighter"
           >
             CYBER QUEST
@@ -47,7 +66,7 @@
           </p>
           <button
             id="start-btn"
-            class="group relative px-16 py-6 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-black text-2xl text-white shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-110 transition-all duration-300"
+            class="group relative px-16 py-6 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-black text-2xl text-white shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-110 transition-all duration-300 transform-gpu"
           >
             <span class="relative z-10">BẮT ĐẦU NGAY 🚀</span>
           </button>
@@ -56,7 +75,7 @@
 
       <section id="game-screen" class="hidden flex-col gap-8 min-h-full">
         <div
-          class="flex flex-col md:flex-row justify-between items-center bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl"
+          class="flex flex-col md:flex-row justify-between items-center bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl transform-gpu"
         >
           <h2
             class="text-3xl font-black text-white uppercase italic tracking-tighter flex items-center gap-3"
@@ -73,14 +92,13 @@
               >
               <span
                 id="progress"
-                class="text-3xl font-black text-cyan-300 leading-none"
+                class="text-3xl font-black text-cyan-300 leading-none tabular-nums"
                 >0/36</span
               >
             </div>
             <button
               id="reset-btn"
               class="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-4 rounded-2xl transition-all shadow-lg"
-              title="Làm mới trò chơi"
             >
               🔄
             </button>
@@ -89,7 +107,7 @@
 
         <div class="flex flex-col xl:flex-row gap-8 items-start justify-center">
           <div
-            class="flex-1 w-full bg-black/20 backdrop-blur-sm rounded-[3rem] p-8 border border-white/5 shadow-inner"
+            class="flex-1 w-full bg-black/20 backdrop-blur-sm rounded-[3rem] p-8 border border-white/5 shadow-inner transform-gpu"
           >
             <div id="score-container" class="grid grid-cols-4 gap-4 mb-8"></div>
             <div
@@ -100,37 +118,25 @@
 
           <div class="w-full xl:w-[400px] flex-shrink-0">
             <div
-              class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-2xl rounded-[3rem] p-8 border border-white/20 shadow-2xl relative overflow-hidden"
+              class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-2xl rounded-[3rem] p-8 border border-white/20 shadow-2xl relative overflow-hidden transform-gpu"
             >
               <div class="text-center mb-8 relative z-10">
                 <div class="flex items-center justify-center gap-3 mb-2">
                   <span class="text-3xl">🏆</span>
                   <h3
-                    class="text-3xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg"
+                    class="text-3xl font-black text-white uppercase italic tracking-tighter"
                   >
                     Xếp Hạng
                   </h3>
                 </div>
                 <div
-                  class="h-1.5 w-24 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto"
+                  class="h-1.5 w-24 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto mt-2"
                 ></div>
               </div>
-
               <div
                 id="leaderboard-list"
                 class="space-y-4 relative z-10 min-h-[400px]"
               ></div>
-
-              <div
-                class="mt-10 pt-6 border-t border-white/10 text-center relative z-10"
-              >
-                <p
-                  id="round-notification"
-                  class="text-cyan-300 text-xs font-black uppercase tracking-[0.4em] animate-pulse bg-black/30 py-3 rounded-2xl border border-cyan-500/20"
-                >
-                  Đang thi đấu...
-                </p>
-              </div>
             </div>
           </div>
         </div>
@@ -138,11 +144,11 @@
 
       <div
         id="audio-control"
-        class="fixed bottom-8 left-8 z-[100] bg-slate-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-[2rem] flex items-center gap-5 shadow-2xl transition-all hover:bg-slate-800 group"
+        class="fixed bottom-8 left-8 z-[100] bg-slate-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-[2rem] flex items-center gap-5 shadow-2xl transition-all hover:bg-slate-800 transform-gpu"
       >
         <button
           id="music-toggle"
-          class="w-14 h-14 flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl text-white shadow-lg group-hover:scale-105 transition-transform"
+          class="w-14 h-14 flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl text-white shadow-lg"
         >
           <span id="play-icon" class="text-2xl font-black">▶</span>
         </button>
@@ -168,16 +174,8 @@
             class="w-32 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
           />
         </div>
-        <div
-          id="music-waves"
-          class="flex items-end gap-1 h-6 opacity-0 transition-opacity"
-        >
-          <div class="w-1 bg-cyan-400 rounded-full animate-music-bar-1"></div>
-          <div class="w-1 bg-cyan-400 rounded-full animate-music-bar-2"></div>
-          <div class="w-1 bg-cyan-400 rounded-full animate-music-bar-3"></div>
-        </div>
       </div>
-      <audio id="bg-music" loop>
+      <audio id="bg-music" loop preload="auto">
         <source src="Nhạc Nền/Nhạc nền final.MP3" type="audio/mpeg" />
       </audio>
 
@@ -203,61 +201,10 @@
           <div id="team-options" class="grid grid-cols-2 gap-5"></div>
           <button
             onclick="closeModal('team-modal')"
-            class="mt-10 w-full py-5 text-slate-500 hover:text-white font-black text-xs transition-all uppercase tracking-[0.3em] hover:bg-white/5 rounded-2xl"
+            class="mt-10 w-full py-5 text-slate-500 hover:text-white font-black text-xs transition-all uppercase tracking-[0.3em] rounded-2xl"
           >
-            ← Hủy lượt chọn
+            ← Hủy lượt
           </button>
-        </div>
-      </div>
-
-      <div
-        id="special-intro-modal"
-        class="fixed inset-0 bg-black/95 backdrop-blur-3xl hidden items-center justify-center p-4 z-[200]"
-      >
-        <div class="text-center relative">
-          <div
-            class="absolute inset-0 bg-cyan-500/10 blur-[120px] rounded-full animate-pulse"
-          ></div>
-          <div
-            id="intro-icon"
-            class="text-[14rem] mb-6 float relative z-10 drop-shadow-[0_0_60px_rgba(255,255,255,0.6)]"
-          ></div>
-          <h2
-            id="intro-name"
-            class="text-8xl font-black text-white uppercase italic tracking-tighter mb-6 relative z-10"
-          ></h2>
-          <p
-            id="intro-desc"
-            class="text-cyan-400 text-3xl font-bold tracking-[0.6em] uppercase relative z-10 border-y border-cyan-500/20 py-4 px-12"
-          ></p>
-        </div>
-      </div>
-
-      <div
-        id="question-modal"
-        class="fixed inset-0 bg-slate-950/98 backdrop-blur-xl hidden items-center justify-center p-4 z-[150]"
-      >
-        <div
-          class="bg-[#1e293b] rounded-[4rem] p-10 md:p-16 max-w-3xl w-full cell-pop shadow-2xl relative border border-white/10"
-        >
-          <div
-            id="special-tag"
-            class="absolute -top-8 left-1/2 -translate-x-1/2 z-10"
-          ></div>
-          <div class="text-center mb-12">
-            <p
-              class="text-cyan-400 text-xs font-black uppercase tracking-[0.5em] mb-6"
-            >
-              Thử thách Security:
-            </p>
-            <h2
-              id="question-word"
-              class="text-7xl font-black text-white leading-tight drop-shadow-2xl italic"
-            >
-              Word
-            </h2>
-          </div>
-          <div id="options-container" class="grid gap-5"></div>
         </div>
       </div>
 
@@ -280,7 +227,7 @@
           ></p>
           <button
             onclick="closeResultModal()"
-            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black py-6 rounded-[2rem] hover:scale-105 shadow-xl text-xl uppercase tracking-widest transition-all"
+            class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black py-6 rounded-[2rem] hover:scale-105 shadow-xl text-xl transition-all"
           >
             TIẾP TỤC 🚀
           </button>
@@ -292,7 +239,7 @@
         class="fixed inset-0 bg-slate-950/95 backdrop-blur-3xl hidden flex-col items-center justify-center p-4 z-[180]"
       >
         <div
-          class="bg-white/5 border border-white/10 rounded-[4rem] p-12 max-w-5xl w-full h-[85vh] flex flex-col relative shadow-2xl"
+          class="bg-white/5 border border-white/10 rounded-[4rem] p-12 max-w-5xl w-full h-[85vh] flex flex-col relative shadow-2xl transform-gpu"
         >
           <div class="text-center mb-10">
             <h3
@@ -326,5 +273,16 @@
     <script src="minigame_match.js"></script>
     <script src="data.js"></script>
     <script src="game.js"></script>
+
+    <script>
+      window.addEventListener("load", () => {
+        const loader = document.getElementById("loading-overlay");
+        // Đảm bảo code khởi tạo xong mới ẩn loading
+        setTimeout(() => {
+          loader.classList.add("opacity-0");
+          setTimeout(() => (loader.style.display = "none"), 500);
+        }, 1000);
+      });
+    </script>
   </body>
 </html>
