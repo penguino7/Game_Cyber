@@ -109,9 +109,12 @@ function handleCellClick(index) {
 // 6. CHỌN ĐỘI & HIỆN INTRO
 function selectTeam(teamIdx) {
   gameState.currentTeam = teamIdx;
+
+  // Chỉ thêm vào danh sách đã chơi nếu chưa có (tránh duplicate gây lỗi đếm)
   if (!gameState.teamsAnsweredThisRound.includes(teamIdx)) {
     gameState.teamsAnsweredThisRound.push(teamIdx);
   }
+
   closeModal("team-modal");
 
   const spec = gameState.currentSpecialType;
@@ -121,16 +124,23 @@ function selectTeam(teamIdx) {
 
   showModal("special-intro-modal");
 
+  // Đợi hiệu ứng Intro xong mới gọi câu hỏi
   setTimeout(() => {
     closeModal("special-intro-modal");
-    // Kiểm tra xem có phải ô Mini-game (Ô số 1) không
-    if (
-      gameState.currentCell === 0 &&
-      typeof startMatchingGame === "function"
-    ) {
+
+    // Kiểm tra dữ liệu câu hỏi trước khi hiển thị
+    if (gameState.currentCell === 0) {
       startMatchingGame((isWin) => handleMinigameResult(isWin));
     } else {
-      setupQuestion();
+      const questionData = vocabularyData[gameState.currentCell];
+      if (questionData) {
+        setupQuestion(); // Chỉ gọi nếu có dữ liệu câu hỏi
+      } else {
+        console.error("Lỗi: Không tìm thấy dữ liệu câu hỏi cho ô này!");
+        // Xử lý tạm thời nếu thiếu dữ liệu để không bị treo game
+        gameState.answered.push(gameState.currentCell);
+        updateUI();
+      }
     }
   }, 1800);
 }
@@ -204,9 +214,13 @@ function handleMinigameResult(isSuccess) {
 
 // 10. KẾT THÚC VÒNG & LEADERBOARD
 function checkRoundEnd() {
-  const isRoundEnd = gameState.teamsAnsweredThisRound.length === 4;
-  if (isRoundEnd) gameState.teamsAnsweredThisRound = [];
-  updateLeaderboard(isRoundEnd);
+  // Kiểm tra nếu cả 4 đội đều đã có lượt trả lời trong vòng này
+  if (gameState.teamsAnsweredThisRound.length === 4) {
+    gameState.teamsAnsweredThisRound = []; // Reset danh sách đội đã chơi
+    updateLeaderboard(true); // Thông báo vòng mới bắt đầu
+  } else {
+    updateLeaderboard(false);
+  }
 }
 
 function updateLeaderboard(isRoundEnd) {
